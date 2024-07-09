@@ -1,21 +1,18 @@
 import React, { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
-import { useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
-
 import { useFirebase } from "../context/Firebase";
+import { useNavigate } from "react-router-dom";
 
 const RegisterPage = () => {
   const firebase = useFirebase();
   const navigate = useNavigate();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   useEffect(() => {
     if (firebase.isLoggedIn) {
-      //nav to home
-      navigate("/");
+      navigate("/addtodo");
     }
   }, [firebase, navigate]);
 
@@ -26,7 +23,6 @@ const RegisterPage = () => {
       email,
       password
     );
-
     console.log("Registration successful:", result);
   };
 
@@ -56,9 +52,14 @@ const RegisterPage = () => {
           />
         </Form.Group>
 
-        <Button variant="primary" type="submit">
-          Create Account
-        </Button>
+        <span>
+          <Button variant="primary" type="submit">
+            Create Account
+          </Button>{" "}
+          <Button variant="secondary" onClick={() => navigate("/login")}>
+            Login
+          </Button>
+        </span>
       </Form>
     </div>
   );

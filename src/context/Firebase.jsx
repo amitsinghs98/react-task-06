@@ -1,3 +1,5 @@
+// Firebase.js
+
 import { createContext, useContext, useEffect, useState } from "react";
 import { initializeApp } from "firebase/app";
 import {
@@ -8,6 +10,15 @@ import {
   signInWithPopup,
   onAuthStateChanged,
 } from "firebase/auth";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 // Create a context for Firebase
 const FirebaseContext = createContext(null);
@@ -27,6 +38,8 @@ const firebaseApp = initializeApp(firebaseConfig);
 
 // Get Firebase auth instance
 const firebaseAuth = getAuth(firebaseApp);
+const firestore = getFirestore(firebaseApp);
+const storage = getStorage(firebaseApp);
 
 // Google Authentication Provider
 const googleProvider = new GoogleAuthProvider();
@@ -41,6 +54,41 @@ const signinUserWithEmailAndPass = (email, password) =>
 
 // Function to sign in with Google
 const signinWithGoogle = () => signInWithPopup(firebaseAuth, googleProvider);
+
+// Function to handle creating a new todo
+const handleCreateNewTodo = async (listName, user) => {
+  try {
+    const todoRef = collection(firestore, "todos");
+    await addDoc(todoRef, {
+      listName,
+      userId: user.uid, // Associate todo with user's ID
+      userEmail: user.email,
+      displayName: user.displayName || "Anonymous",
+      createdAt: new Date(),
+    });
+    console.log("Todo created successfully");
+  } catch (error) {
+    console.error("Error creating todo: ", error);
+  }
+};
+
+// Function to list todos for the authenticated user
+const listTodos = async (user) => {
+  try {
+    if (!user) return []; // Return empty array if user is not authenticated
+
+    const todosRef = collection(firestore, "todos");
+    const q = query(todosRef, where("userId", "==", user.uid));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+  } catch (error) {
+    console.error("Error fetching todos: ", error);
+    return [];
+  }
+};
 
 // Custom hook to use Firebase context
 export const useFirebase = () => useContext(FirebaseContext);
@@ -58,6 +106,15 @@ export const FirebaseProvider = (props) => {
 
   const isLoggedIn = !!user;
 
+  const signout = async () => {
+    try {
+      await firebaseAuth.signOut();
+      setUser(null); // Clear user state on logout
+    } catch (error) {
+      console.error("Error signing out: ", error);
+    }
+  };
+
   return (
     <FirebaseContext.Provider
       value={{
@@ -65,6 +122,9 @@ export const FirebaseProvider = (props) => {
         signinUserWithEmailAndPass,
         signinWithGoogle,
         isLoggedIn,
+        handleCreateNewTodo: (listName) => handleCreateNewTodo(listName, user),
+        signout,
+        listTodos: () => listTodos(user), // Call listTodos with user context
       }}
     >
       {props.children}

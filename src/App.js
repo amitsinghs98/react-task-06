@@ -4,6 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import RegisterPage from "./pages/Register";
 import LoginPage from "./pages/Login";
 import ListingPage from "./pages/List";
+import HomePage from "./pages/Home";
 //Components
 import MyNavbar from "./components/Navbar";
 //CSS
@@ -16,10 +17,10 @@ function App() {
         <MyNavbar />
 
         <Routes>
-          <Route path="/" element={<h1>Home</h1>} />
+          <Route path="/" element={<RegisterPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/AddTodo" element={<ListingPage />} />
+          <Route path="/addtodo" element={<ListingPage />} />
         </Routes>
       </div>
     </>

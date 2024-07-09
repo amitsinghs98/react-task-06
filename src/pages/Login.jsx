@@ -14,7 +14,7 @@ const LoginPage = () => {
   useEffect(() => {
     if (firebase.isLoggedIn) {
       //nav to home
-      navigate("/");
+      navigate("/addtodo");
     }
   }, [firebase, navigate]);
   console.log(firebase);
