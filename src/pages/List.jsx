@@ -1,35 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
-import { useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 
-import { useFirebase } from "../context/Firebase";
-
-const RegisterPage = () => {
-  const firebase = useFirebase();
-  const navigate = useNavigate();
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  useEffect(() => {
-    if (firebase.isLoggedIn) {
-      //nav to home
-      navigate("/");
-    }
-  }, [firebase, navigate]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log("Signing user...");
-    const result = await firebase.signupUserWithEmailAndPassword(
-      email,
-      password
-    );
-
-    console.log("Registration successful:", result);
-  };
-
+const ListingPage = () => {
+  const [name, setName] = useState("");
   return (
     <div className="container mt-5">
       <Form onSubmit={handleSubmit}>
@@ -41,9 +15,6 @@ const RegisterPage = () => {
             type="email"
             placeholder="Enter email"
           />
-          <Form.Text className="text-muted">
-            We'll never share your email with anyone else.
-          </Form.Text>
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="formBasicPassword">
@@ -57,11 +28,15 @@ const RegisterPage = () => {
         </Form.Group>
 
         <Button variant="primary" type="submit">
-          Create Account
+          Login
         </Button>
       </Form>
+      <h1 className="mt-5 mb-5">OR</h1>
+      <Button variant="danger" onClick={firebase.signinWithGoogle}>
+        Signin With Google
+      </Button>
     </div>
   );
 };
 
-export default RegisterPage;
+export default ListingPage;
