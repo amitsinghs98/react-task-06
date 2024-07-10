@@ -63,7 +63,7 @@ const handleCreateNewTodo = async (listName, user) => {
       listName,
       userId: user.uid, // Associate todo with user's ID
       userEmail: user.email,
-      displayName: user.displayName || "Anonymous",
+
       createdAt: new Date(),
     });
     console.log("Todo created successfully");
