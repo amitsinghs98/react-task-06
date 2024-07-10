@@ -4,7 +4,7 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useFirebase } from "../context/Firebase";
 import { useNavigate } from "react-router-dom";
-
+import "../index.css";
 const ListingPage = () => {
   const { handleCreateNewTodo, isLoggedIn, signout, listTodos, handleAddTask } =
     useFirebase();
@@ -31,7 +31,10 @@ const ListingPage = () => {
     setError(null);
     try {
       const todosData = await listTodos();
+      console.log(todosData);
       setTodos(todosData);
+      // setAddedTasks(todosData[0].tasks);
+      // console.log(todosData[0]?.tasks, "dfhdgfhsg");
       setLoading(false);
     } catch (error) {
       console.error("Error fetching todos: ", error);
@@ -61,37 +64,97 @@ const ListingPage = () => {
     navigate("/"); // Redirect to home page after logout
   };
 
-  const handleTodoSubmit = async (e, todoId) => {
+  const handleTodoSubmit = async (
+    e,
+    todoId,
+    title,
+    description,
+    date,
+    priority
+  ) => {
+    const updatedData = todos.map((item) => {
+      if (item.id === todoId) {
+        return { ...item, loading: true };
+      }
+      return item;
+    });
+
+    setTodos(updatedData);
+
     e.preventDefault();
-    setLoading(true);
+    // setLoading(true);
     setError(null);
     try {
       const newTask = {
         todoId,
-        taskTitle,
-        taskDescription,
-        selectedDate,
+        title,
+        description,
+        date,
         priority,
       };
-      await handleAddTask(
-        todoId,
-        taskTitle,
-        taskDescription,
-        selectedDate,
-        priority
-      );
-      setTaskTitle(""); // Clear input fields after adding task
-      setTaskDescription("");
-      setSelectedDate("");
-      setPriority("Low");
+      console.log(newTask, "fghsj");
+      await handleAddTask(todoId, title, description, date, priority);
+      // setTaskTitle(""); // Clear input fields after adding task
+      // setTaskDescription("");
+      // setSelectedDate("");
+      // setPriority("Low");
       setAddedTasks((prevTasks) => [...prevTasks, newTask]); // Add new task to addedTasks state
-      await fetchTodos(); // Fetch updated todos after adding task
+      // await fetchTodos(); // Fetch updated todos after adding task
+      const updatedData = todos.map((item) => {
+        if (item.id === todoId) {
+          return { ...item, loading: false };
+        }
+        return item;
+      });
+
+      setTodos(updatedData);
     } catch (error) {
       console.error("Error adding task: ", error);
       setError("Failed to add task. Please try again.");
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
+  };
+
+  const handleTitle = (e, id) => {
+    const updatedData = todos.map((item) => {
+      if (item.id === id) {
+        return { ...item, title: e.target.value };
+      }
+      return item;
+    });
+
+    setTodos(updatedData);
+  };
+  const handleDescription = (e, id) => {
+    const updatedData = todos.map((item) => {
+      if (item.id === id) {
+        return { ...item, description: e.target.value };
+      }
+      return item;
+    });
+
+    setTodos(updatedData);
+  };
+  const handleDate = (e, id) => {
+    const updatedData = todos.map((item) => {
+      if (item.id === id) {
+        return { ...item, date: e.target.value };
+      }
+      return item;
+    });
+
+    setTodos(updatedData);
+  };
+  const handlePriority = (e, id) => {
+    const updatedData = todos.map((item) => {
+      if (item.id === id) {
+        return { ...item, priority: e.target.value };
+      }
+      return item;
+    });
+
+    setTodos(updatedData);
   };
 
   return (
@@ -123,39 +186,61 @@ const ListingPage = () => {
             <h4>{todo.listName}</h4>
 
             {/* Form to add tasks */}
-            <Form onSubmit={(e) => handleTodoSubmit(e, todo.id)}>
+            <Form
+              onSubmit={(e) =>
+                handleTodoSubmit(
+                  e,
+                  todo.id,
+                  todo?.title,
+                  todo?.description,
+                  todo?.date,
+                  todo?.priority
+                )
+              }
+            >
               <Form.Group className="mb-3" controlId="formBasicEmail">
                 <Form.Label>Add Task</Form.Label>
                 <Form.Control
                   type="text"
-                  value={taskTitle}
-                  onChange={(e) => setTaskTitle(e.target.value)}
+                  value={todo?.title}
+                  // onChange={(e) => setTaskTitle(e.target.value)}
+                  onChange={(e) => {
+                    handleTitle(e, todo.id);
+                  }}
                   placeholder="Task Title"
                 />
                 <Form.Control
                   type="text"
-                  value={taskDescription}
-                  onChange={(e) => setTaskDescription(e.target.value)}
+                  value={todo?.description}
+                  // onChange={(e) => setTaskDescription(e.target.value)}
+                  onChange={(e) => handleDescription(e, todo.id)}
                   placeholder="Task Description"
                 />
                 <Form.Control
                   type="date"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
+                  value={todo?.date}
+                  // onChange={(e) => setSelectedDate(e.target.value)}
+                  onChange={(e) => {
+                    handleDate(e, todo.id);
+                  }}
                 />
                 <Form.Control
                   as="select"
-                  value={priority}
-                  onChange={(e) => setPriority(e.target.value)}
+                  value={todo?.priority}
+                  onChange={(e) => handlePriority(e, todo.id)}
+                  // onChange={(e) => setPriority(e.target.value)}
                 >
+                  {" "}
+                  <option value="">Select Priority</option>{" "}
+                  {/* Default option */}
                   <option value="Low">Low</option>
                   <option value="Medium">Medium</option>
                   <option value="High">High</option>
                 </Form.Control>
               </Form.Group>
 
-              <Button variant="primary" type="submit" disabled={loading}>
-                {loading ? "Adding..." : "Add Task"}
+              <Button variant="primary" type="submit" disabled={todo?.loading}>
+                {todo?.loading ? "Adding..." : "Add Task"}
               </Button>
             </Form>
           </div>
@@ -163,28 +248,64 @@ const ListingPage = () => {
       </div>
 
       {/* Display added tasks */}
+      {/* <div className="mt-4">
+        <h2>Added Tasks</h2>
+        {addedTasks?.length === 0 && <p>No tasks added yet.</p>}
+        {addedTasks?.map((task, index) => (
+          <div className="low-priority">
+            <div key={index} className="border p-3 mb-3">
+              <h4>Task Details</h4>
+              <p>
+                <strong>Todo ID:</strong> {task.todoId}
+              </p>
+              <p>
+                <strong>Title:</strong> {task.title}
+              </p>
+              <p>
+                <strong>Description:</strong> {task.description}
+              </p>
+              <p>
+                <strong>Date:</strong> {task.date}
+              </p>
+              <p>
+                <strong>Priority:</strong> {task.priority}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div> */}
       <div className="mt-4">
         <h2>Added Tasks</h2>
-        {addedTasks.length === 0 && <p>No tasks added yet.</p>}
-        {addedTasks.map((task, index) => (
-          <div key={index} className="border p-3 mb-3">
-            <h4>Task Details</h4>
-            <p>
-              <strong>Todo ID:</strong> {task.todoId}
-            </p>
-            <p>
-              <strong>Title:</strong> {task.taskTitle}
-            </p>
-            <p>
-              <strong>Description:</strong> {task.taskDescription}
-            </p>
-            <p>
-              <strong>Date:</strong> {task.selectedDate}
-            </p>
-            <p>
-              <strong>Priority:</strong> {task.priority}
-            </p>
-          </div>
+        {todos?.length === 0 && <p>No tasks added yet.</p>}
+        {todos?.map((task, index) => (
+          <>
+            {task?.tasks?.map((child, i) => {
+              return (
+                <>
+                  <div className="low-priority">
+                    <div key={index} className="border p-3 mb-3">
+                      <h4>Task Details</h4>
+                      <p>
+                        <strong>Todo ID:</strong> {child.todoId}
+                      </p>
+                      <p>
+                        <strong>Title:</strong> {child.title}
+                      </p>
+                      <p>
+                        <strong>Description:</strong> {child.description}
+                      </p>
+                      <p>
+                        <strong>Date:</strong> {child.date}
+                      </p>
+                      <p>
+                        <strong>Priority:</strong> {child.priority}
+                      </p>
+                    </div>
+                  </div>
+                </>
+              );
+            })}
+          </>
         ))}
       </div>
 

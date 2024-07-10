@@ -1,0 +1,11 @@
+.low-priority {
+  width: 300px;
+  height: 400px;
+
+  border: 1px solid #ccc; /* Optional: Adding a border for visualization */
+}
+.med-priority {
+  width: 300px;
+  height: 400px;
+  border: 1px solid #ccc; /* Optional: Adding a border for visualization */
+}

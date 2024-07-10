@@ -19,7 +19,7 @@ import {
   where,
   updateDoc,
   doc,
-  getDoc, // Import getDoc function
+  getDoc,
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
@@ -77,25 +77,31 @@ const handleCreateNewTodo = async (listName, user) => {
 // Function to handle adding a new task to a todo
 const handleAddTask = async (
   todoId,
-  taskTitle,
-  taskDescription,
-  selectedDate,
-  priority
+  title,
+  description,
+  date,
+  priority,
+  callback // Callback function to update state with updated todos
 ) => {
   try {
+    console.log(title, description, priority, date, "dfsdfhjk");
     const todoDocRef = doc(firestore, "todos", todoId);
     await updateDoc(todoDocRef, {
       tasks: [
         ...(await getDoc(todoDocRef)).data().tasks, // Preserve existing tasks
         {
-          title: taskTitle,
-          description: taskDescription,
-          date: selectedDate,
+          title: title,
+          description: description,
+          date: date,
           priority: priority,
         },
       ],
     });
     console.log("Task added successfully");
+
+    // After adding task, fetch updated todos and invoke callback to update state
+    const updatedTodos = await listTodos(); // Fetch updated todos
+    callback(updatedTodos); // Update state with updated todos
   } catch (error) {
     console.error("Error adding task: ", error);
   }
@@ -152,7 +158,8 @@ export const FirebaseProvider = (props) => {
         signinWithGoogle,
         isLoggedIn,
         handleCreateNewTodo: (listName) => handleCreateNewTodo(listName, user),
-        handleAddTask,
+        handleAddTask: (todoId, title, description, date, priority, callback) =>
+          handleAddTask(todoId, title, description, date, priority, callback),
         signout,
         listTodos: () => listTodos(user), // Call listTodos with user context
       }}
