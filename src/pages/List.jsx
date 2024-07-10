@@ -169,7 +169,9 @@ const ListingPage = () => {
         {addedTasks.map((task, index) => (
           <div key={index} className="border p-3 mb-3">
             <h4>Task Details</h4>
-
+            <p>
+              <strong>Todo ID:</strong> {task.todoId}
+            </p>
             <p>
               <strong>Title:</strong> {task.taskTitle}
             </p>
