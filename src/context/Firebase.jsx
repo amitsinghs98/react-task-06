@@ -17,6 +17,9 @@ import {
   getDocs,
   query,
   where,
+  updateDoc,
+  doc,
+  getDoc, // Import getDoc function
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
@@ -32,7 +35,6 @@ const firebaseConfig = {
   messagingSenderId: "936949043152",
   appId: "1:936949043152:web:7d69357d6a1cdea15af3d5",
 };
-
 // Initialize Firebase app
 const firebaseApp = initializeApp(firebaseConfig);
 
@@ -63,12 +65,39 @@ const handleCreateNewTodo = async (listName, user) => {
       listName,
       userId: user.uid, // Associate todo with user's ID
       userEmail: user.email,
-
+      tasks: [], // Initialize tasks as an empty array
       createdAt: new Date(),
     });
     console.log("Todo created successfully");
   } catch (error) {
     console.error("Error creating todo: ", error);
+  }
+};
+
+// Function to handle adding a new task to a todo
+const handleAddTask = async (
+  todoId,
+  taskTitle,
+  taskDescription,
+  selectedDate,
+  priority
+) => {
+  try {
+    const todoDocRef = doc(firestore, "todos", todoId);
+    await updateDoc(todoDocRef, {
+      tasks: [
+        ...(await getDoc(todoDocRef)).data().tasks, // Preserve existing tasks
+        {
+          title: taskTitle,
+          description: taskDescription,
+          date: selectedDate,
+          priority: priority,
+        },
+      ],
+    });
+    console.log("Task added successfully");
+  } catch (error) {
+    console.error("Error adding task: ", error);
   }
 };
 
@@ -123,6 +152,7 @@ export const FirebaseProvider = (props) => {
         signinWithGoogle,
         isLoggedIn,
         handleCreateNewTodo: (listName) => handleCreateNewTodo(listName, user),
+        handleAddTask,
         signout,
         listTodos: () => listTodos(user), // Call listTodos with user context
       }}
