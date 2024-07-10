@@ -76,8 +76,26 @@ const ListingPage = () => {
     e.preventDefault();
     setError(null);
     try {
-      await handleAddTask(todoId, title, description, date, priority);
-      const newTask = { todoId, title, description, date, priority };
+      const createdAt = new Date(); // Creation time
+      const updatedAt = new Date(); // Initial updated time
+      await handleAddTask(
+        todoId,
+        title,
+        description,
+        date,
+        priority,
+        createdAt,
+        updatedAt // Pass updatedAt to the handleAddTask function
+      );
+      const newTask = {
+        todoId,
+        title,
+        description,
+        date,
+        priority,
+        createdAt,
+        updatedAt,
+      };
       setAddedTasks([...addedTasks, newTask]);
       const updatedData = todos.map((item) => {
         if (item.id === todoId) {

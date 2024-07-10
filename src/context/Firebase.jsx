@@ -47,8 +47,50 @@ const storage = getStorage(firebaseApp);
 const googleProvider = new GoogleAuthProvider();
 
 // Function to sign up user with email and password
-const signupUserWithEmailAndPassword = (email, password) =>
-  createUserWithEmailAndPassword(firebaseAuth, email, password);
+// const signupUserWithEmailAndPassword = (email, password) =>
+//   createUserWithEmailAndPassword(firebaseAuth, email, password);
+//fetch ip
+const fetchIPAddress = async () => {
+  try {
+    // Replace with actual logic to fetch IP address dynamically (e.g., using a service)
+    const response = await fetch("https://api64.ipify.org?format=json");
+    const data = await response.json();
+    return data.ip;
+  } catch (error) {
+    console.error("Error fetching IP address: ", error);
+    throw error;
+  }
+};
+// Function to sign up user with email and password
+
+const signupUserWithEmailAndPassword = async (email, password) => {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(
+      firebaseAuth,
+      email,
+      password
+    );
+    const user = userCredential.user;
+
+    // Get IP address of user (replace with actual logic to fetch IP dynamically)
+    const ipAddress = await fetchIPAddress(); // Function to fetch IP address dynamically
+
+    // Add user data to Firestore
+    const usersRef = collection(firestore, "users");
+    await addDoc(usersRef, {
+      userId: user.uid,
+      userEmail: user.email,
+      userIp: ipAddress,
+      createdAt: new Date(),
+    });
+    console.log("User created successfully");
+
+    return user;
+  } catch (error) {
+    console.error("Error creating user: ", error);
+    throw error; // Propagate the error back to the caller
+  }
+};
 
 // Function to sign in user with email and password
 const signinUserWithEmailAndPass = (email, password) =>
@@ -81,6 +123,7 @@ const handleAddTask = async (
   description,
   date,
   priority,
+  createdAt,
   callback // Callback function to update state with updated todos
 ) => {
   try {
@@ -105,6 +148,7 @@ const handleAddTask = async (
       description: description,
       date: date,
       priority: priority,
+      createdAt: new Date(),
     };
 
     // Update tasks array with the new task
