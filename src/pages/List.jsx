@@ -72,9 +72,24 @@ const ListingPage = () => {
     date,
     priority
   ) => {
+    const newTasksave = {
+      todoId,
+      title,
+      description,
+      date,
+      priority,
+    };
+    console.log(newTasksave, "fghsj");
+
     const updatedData = todos.map((item) => {
       if (item.id === todoId) {
-        return { ...item, loading: true };
+        const updatedItem = {
+          ...item,
+          loading: true,
+          // Add your new object here
+        };
+        updatedItem.tasks.push(newTasksave);
+        return updatedItem;
       }
       return item;
     });
@@ -115,6 +130,7 @@ const ListingPage = () => {
       // setLoading(false);
     }
   };
+  console.log(todos);
 
   const handleTitle = (e, id) => {
     const updatedData = todos.map((item) => {
@@ -248,69 +264,6 @@ const ListingPage = () => {
       </div>
 
       {/* Display added tasks */}
-      {/* <div className="mt-4">
-        <h2>Added Tasks</h2>
-        {addedTasks?.length === 0 && <p>No tasks added yet.</p>}
-        {addedTasks?.map((task, index) => (
-          <div className="low-priority">
-            <div key={index} className="border p-3 mb-3">
-              <h4>Task Details</h4>
-              <p>
-                <strong>Todo ID:</strong> {task.todoId}
-              </p>
-              <p>
-                <strong>Title:</strong> {task.title}
-              </p>
-              <p>
-                <strong>Description:</strong> {task.description}
-              </p>
-              <p>
-                <strong>Date:</strong> {task.date}
-              </p>
-              <p>
-                <strong>Priority:</strong> {task.priority}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div> */}
-      {/* {Running code} */}
-      {/* <div className="mt-4">
-        <h2>Added Tasks</h2>
-        {todos?.length === 0 && <p>No tasks added yet.</p>}
-        {todos?.map((task, index) => (
-          <>
-            {task?.tasks?.map((child, i) => {
-              return (
-                <>
-                  <div className="low-priority">
-                    <div key={index} className="border p-3 mb-3">
-                      <h4>Task Details</h4>
-                      <p>
-                        <strong>Todo ID:</strong> {child.todoId}
-                      </p>
-                      <p>
-                        <strong>Title:</strong> {child.title}
-                      </p>
-                      <p>
-                        <strong>Description:</strong> {child.description}
-                      </p>
-                      <p>
-                        <strong>Date:</strong> {child.date}
-                      </p>
-                      <p>
-                        <strong>Priority:</strong> {child.priority}
-                      </p>
-                    </div>
-                  </div>
-                </>
-              );
-            })}
-          </>
-        ))}
-      </div> */}
-
-      {/* Display added tasks */}
       <div className="mt-4">
         <h2>Added Tasks</h2>
         <div className="priority-container">
@@ -324,9 +277,9 @@ const ListingPage = () => {
                     .map((task, index) => (
                       <div key={index} className="border p-3 mb-3">
                         <h4>Task Details</h4>
-                        <p>
+                        {/* <p>
                           <strong>Todo ID:</strong> {task.todoId}
-                        </p>
+                        </p> */}
                         <p>
                           <strong>Title:</strong> {task.title}
                         </p>
@@ -354,9 +307,9 @@ const ListingPage = () => {
                     .map((task, index) => (
                       <div key={index} className="border p-3 mb-3">
                         <h4>Task Details</h4>
-                        <p>
+                        {/* <p>
                           <strong>Todo ID:</strong> {task.todoId}
-                        </p>
+                        </p> */}
                         <p>
                           <strong>Title:</strong> {task.title}
                         </p>
@@ -384,9 +337,9 @@ const ListingPage = () => {
                     .map((task, index) => (
                       <div key={index} className="border p-3 mb-3">
                         <h4>Task Details</h4>
-                        <p>
+                        {/* <p>
                           <strong>Todo ID:</strong> {task.todoId}
-                        </p>
+                        </p> */}
                         <p>
                           <strong>Title:</strong> {task.title}
                         </p>
