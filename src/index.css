@@ -1,10 +1,13 @@
 /* index.css */
 
+/* Global container styles */
 .container {
   max-width: 800px;
   margin: 0 auto;
+  padding: 0 15px; /* Added padding to container */
 }
 
+/* Margin and padding utility classes */
 .mb-3 {
   margin-bottom: 1rem;
 }
@@ -13,6 +16,7 @@
   margin-top: 1rem;
 }
 
+/* Border and padding for generic container */
 .border {
   border: 1px solid #ccc;
   padding: 1rem;
@@ -45,21 +49,17 @@
   background-color: #ffe6e6; /* Light pink background for high priority tasks */
 }
 
-/* index.css */
-
-/* Other existing styles */
-
 /* Flex container for todos */
 .todos-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem; /* Gap between task items */
+  gap: 20px; /* Increased gap between task items */
 }
 
 /* Task item styling */
 .task-item {
-  flex: 0 0 calc(33.33% - 1rem); /* Each task item takes one-third of the container width minus the gap */
-  padding: 1rem;
+  flex: 1 1 calc(33.33% - 20px); /* Three items per row with gap */
+  padding: 10px; /* Adjusted padding for task items */
   border: 1px solid #ccc;
   background-color: #f0f0f0; /* Light gray background for task items */
 }
@@ -67,7 +67,7 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .task-item {
-    flex: 0 0 calc(50% - 1rem); /* Two tasks per row on smaller screens */
+    flex: 1 1 calc(50% - 20px); /* Two tasks per row on smaller screens */
   }
 }
 
@@ -77,32 +77,7 @@
   }
 }
 
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 0 15px;
-}
-
-.todos-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.task-item {
-  width: calc(33.33% - 20px); /* Three items per row with gap */
-  flex-grow: 1;
-}
-
-.task-item .border {
-  border: 1px solid #ccc;
-  padding: 10px;
-}
-
-.task-item h4 {
-  margin-bottom: 10px;
-}
-
+/* Text center alignment utility class */
 .text-center {
   text-align: center;
 }
