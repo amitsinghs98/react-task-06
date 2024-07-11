@@ -84,24 +84,44 @@ const handleAddTask = async (
   callback // Callback function to update state with updated todos
 ) => {
   try {
-    console.log(title, description, priority, date, "dfsdfhjk");
+    // Ensure required fields are defined
+    if (!todoId || !title || !description || !date || !priority) {
+      throw new Error("One or more task fields are undefined.");
+    }
+
+    // Get the document reference for the todo
     const todoDocRef = doc(firestore, "todos", todoId);
+    const todoSnapshot = await getDoc(todoDocRef);
+    if (!todoSnapshot.exists()) {
+      throw new Error("Todo does not exist."); // Handle if todoId is invalid
+    }
+
+    // Get current tasks array or initialize it if it doesn't exist
+    const tasks = todoSnapshot.data().tasks || [];
+
+    // Construct the new task object
+    const newTask = {
+      title: title,
+      description: description,
+      date: date,
+      priority: priority,
+    };
+
+    // Update tasks array with the new task
+    const updatedTasks = [...tasks, newTask];
+
+    // Update Firestore document with the updated tasks array
     await updateDoc(todoDocRef, {
-      tasks: [
-        ...(await getDoc(todoDocRef)).data().tasks, // Preserve existing tasks
-        {
-          title: title,
-          description: description,
-          date: date,
-          priority: priority,
-        },
-      ],
+      tasks: updatedTasks,
     });
+
     console.log("Task added successfully");
 
-    // After adding task, fetch updated todos and invoke callback to update state
-    const updatedTodos = await listTodos(); // Fetch updated todos
-    callback(updatedTodos); // Update state with updated todos
+    // If callback function is provided, invoke it with updated todos
+    if (typeof callback === "function") {
+      const updatedTodos = await listTodos(); // Fetch updated todos
+      callback(updatedTodos); // Update state with updated todos
+    }
   } catch (error) {
     console.error("Error adding task: ", error);
   }
