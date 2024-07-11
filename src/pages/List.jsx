@@ -178,8 +178,8 @@ const ListingPage = () => {
       </Form>
 
       {/* Display todos */}
-      <div className="mt-4">
-        <h2>My Todos</h2>
+      <h2>My Todos</h2>
+      <div className="mt-4 todos-container">
         {todos.length === 0 && <p>No todos found.</p>}
         {todos.map((todo) => (
           <div key={todo.id} className="border p-3 mb-3">
@@ -274,7 +274,8 @@ const ListingPage = () => {
           </div>
         ))}
       </div> */}
-      <div className="mt-4">
+      {/* {Running code} */}
+      {/* <div className="mt-4">
         <h2>Added Tasks</h2>
         {todos?.length === 0 && <p>No tasks added yet.</p>}
         {todos?.map((task, index) => (
@@ -307,6 +308,103 @@ const ListingPage = () => {
             })}
           </>
         ))}
+      </div> */}
+
+      {/* Display added tasks */}
+      <div className="mt-4">
+        <h2>Added Tasks</h2>
+        <div className="priority-container">
+          <div className="priority-section low-priority">
+            <h3>Low Priority</h3>
+            {todos.map((todo) => (
+              <div key={todo.id}>
+                {todo.tasks &&
+                  todo.tasks
+                    .filter((task) => task.priority === "Low")
+                    .map((task, index) => (
+                      <div key={index} className="border p-3 mb-3">
+                        <h4>Task Details</h4>
+                        <p>
+                          <strong>Todo ID:</strong> {task.todoId}
+                        </p>
+                        <p>
+                          <strong>Title:</strong> {task.title}
+                        </p>
+                        <p>
+                          <strong>Description:</strong> {task.description}
+                        </p>
+                        <p>
+                          <strong>Date:</strong> {task.date}
+                        </p>
+                        <p>
+                          <strong>Priority:</strong> {task.priority}
+                        </p>
+                      </div>
+                    ))}
+              </div>
+            ))}
+          </div>
+          <div className="priority-section med-priority">
+            <h3>Medium Priority</h3>
+            {todos.map((todo) => (
+              <div key={todo.id}>
+                {todo.tasks &&
+                  todo.tasks
+                    .filter((task) => task.priority === "Medium")
+                    .map((task, index) => (
+                      <div key={index} className="border p-3 mb-3">
+                        <h4>Task Details</h4>
+                        <p>
+                          <strong>Todo ID:</strong> {task.todoId}
+                        </p>
+                        <p>
+                          <strong>Title:</strong> {task.title}
+                        </p>
+                        <p>
+                          <strong>Description:</strong> {task.description}
+                        </p>
+                        <p>
+                          <strong>Date:</strong> {task.date}
+                        </p>
+                        <p>
+                          <strong>Priority:</strong> {task.priority}
+                        </p>
+                      </div>
+                    ))}
+              </div>
+            ))}
+          </div>
+          <div className="priority-section high-priority">
+            <h3>High Priority</h3>
+            {todos.map((todo) => (
+              <div key={todo.id}>
+                {todo.tasks &&
+                  todo.tasks
+                    .filter((task) => task.priority === "High")
+                    .map((task, index) => (
+                      <div key={index} className="border p-3 mb-3">
+                        <h4>Task Details</h4>
+                        <p>
+                          <strong>Todo ID:</strong> {task.todoId}
+                        </p>
+                        <p>
+                          <strong>Title:</strong> {task.title}
+                        </p>
+                        <p>
+                          <strong>Description:</strong> {task.description}
+                        </p>
+                        <p>
+                          <strong>Date:</strong> {task.date}
+                        </p>
+                        <p>
+                          <strong>Priority:</strong> {task.priority}
+                        </p>
+                      </div>
+                    ))}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Logout button */}
